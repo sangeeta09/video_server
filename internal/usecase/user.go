@@ -7,7 +7,7 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/tokopedia/video_server/internal/models"
+	"github.com/personal-work/video_server/internal/models"
 
 	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/gorilla/mux"

@@ -3,9 +3,9 @@ package routes
 import (
 	"net/http"
 
-	"github.com/tokopedia/video_server/internal/utils/auth"
+	"github.com/personal-work/video_server/internal/utils/auth"
 
-	controllers "github.com/tokopedia/video_server/internal/usecase"
+	controllers "github.com/personal-work/video_server/internal/usecase"
 
 	"github.com/gorilla/mux"
 )

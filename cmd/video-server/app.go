@@ -4,7 +4,7 @@ import (
 	"log"
 	"net/http"
 
-	routes "github.com/tokopedia/video_server/internal/delivery"
+	routes "github.com/personal-work/video_server/internal/delivery"
 )
 
 func main() {
