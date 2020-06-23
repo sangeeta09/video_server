@@ -69,6 +69,7 @@ func CreateRoom(w http.ResponseWriter, r *http.Request) {
 	log.Println(room)
 
 	w.WriteHeader(http.StatusCreated)
+	json.NewEncoder(w).Encode(&room)
 }
 
 //GetRoomInfo fetchs room info from guid
@@ -139,6 +140,15 @@ func JoinRoom(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	//check for capacity
+	if room.Capacity == len(room.ParticipantList)+1 {
+		//already full
+		w.WriteHeader(http.StatusTooManyRequests)
+		var resp = map[string]interface{}{"message": "Room is full, try another room"}
+		json.NewEncoder(w).Encode(resp)
+		return
+	}
+
 	//add user to room as participant
 	room.ParticipantList = append(room.ParticipantList, tk.UserID)
 
@@ -202,7 +212,12 @@ func LeaveRoom(w http.ResponseWriter, r *http.Request) {
 						finalRoomList = append(finalRoomList, roomGuid)
 					}
 				}
-				models.UserRoomMap[tk.UserID] = finalRoomList
+				if len(finalRoomList) == 0 {
+					delete(models.UserRoomMap, tk.UserID)
+				} else {
+
+					models.UserRoomMap[tk.UserID] = finalRoomList
+				}
 			}
 			delete(models.GuidRoomDetailMap, guid)
 
@@ -226,15 +241,21 @@ func LeaveRoom(w http.ResponseWriter, r *http.Request) {
 		}
 
 		if found {
-			models.UserRoomMap[tk.UserID] = finalRoomList
+			if len(finalRoomList) == 0 {
+				delete(models.UserRoomMap, tk.UserID)
+			} else {
+
+				models.UserRoomMap[tk.UserID] = finalRoomList
+			}
 			w.WriteHeader(http.StatusOK)
 			return
-		} else {
-			w.WriteHeader(http.StatusNotFound)
-			var resp = map[string]interface{}{"message": "User has not joined this room"}
-			json.NewEncoder(w).Encode(resp)
-			return
 		}
+
+		w.WriteHeader(http.StatusNotFound)
+		var resp = map[string]interface{}{"message": "User has not joined this room"}
+		json.NewEncoder(w).Encode(resp)
+		return
+
 	}
 }
 
