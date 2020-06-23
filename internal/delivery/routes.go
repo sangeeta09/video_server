@@ -32,7 +32,7 @@ func InitHandlers() *mux.Router {
 	r.Handle("/rooms/{guid}/users", auth.JwtVerify(http.HandlerFunc(controllers.JoinRoom))).Methods("POST")
 	r.Handle("/rooms/{guid}/users", auth.JwtVerify(http.HandlerFunc(controllers.LeaveRoom))).Methods("DELETE")
 	r.Handle("/rooms/{guid}", auth.JwtVerify(http.HandlerFunc(controllers.ChangeHost))).Methods("PUT")
-	// r.Handle("/users/{id}/rooms", http.HandlerFunc(controllers.GetRoomInfoList)).Methods("GET")
+	r.Handle("/users/{id}/rooms", http.HandlerFunc(controllers.GetRoomInfoList)).Methods("GET")
 
 	return r
 }

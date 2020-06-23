@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+	"strconv"
 
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
@@ -293,10 +294,38 @@ func ChangeHost(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// //GetRoomInfoList
-// func GetRoomInfoList(w http.ResponseWriter, r *http.Request) {
+//GetRoomInfoList
+func GetRoomInfoList(w http.ResponseWriter, r *http.Request) {
+	params := mux.Vars(r)
+	var id = params["id"]
 
-// }
+	ID, err := strconv.ParseUint(id, 0, 64)
+	if err != nil {
+		var resp = map[string]interface{}{"message": "UserId is not integer"}
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(resp)
+		return
+
+	}
+
+	if _, ok := models.UserRoomMap[ID]; !ok {
+		var resp = map[string]interface{}{"message": "This User doesn't have any room"}
+		w.WriteHeader(http.StatusOK)
+		json.NewEncoder(w).Encode(resp)
+		return
+	}
+	roomList := models.UserRoomMap[ID]
+
+	roomInfoList := []*models.Room{}
+	for _, user := range roomList {
+		if room, ok := models.GuidRoomDetailMap[user]; ok {
+			roomInfoList = append(roomInfoList, room)
+		}
+	}
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(roomInfoList)
+
+}
 
 // r.Handle("/users/{id}/rooms/{guid}", auth.JwtVerify(http.HandlerFunc(controllers.JoinRoom))).Methods("POST")
 // r.Handle("/users/{id}/rooms/{guid}", auth.JwtVerify(http.HandlerFunc(controllers.LeaveRoom))).Methods("DELETE")
