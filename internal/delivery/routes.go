@@ -22,7 +22,7 @@ func InitHandlers() *mux.Router {
 	r.HandleFunc("/login", controllers.Login).Methods("POST")
 	r.HandleFunc("/users", controllers.CreateUser).Methods("POST")
 	r.HandleFunc("/users", controllers.GetAllUsers).Methods("GET")
-	r.Handle("/user/{id}", auth.JwtVerify(http.HandlerFunc(controllers.GetUser))).Methods("GET")
+	r.Handle("/user/{id}", http.HandlerFunc(controllers.GetUser)).Methods("GET")
 	r.Handle("/user/{id}", auth.JwtVerify(http.HandlerFunc(controllers.UpdateUser))).Methods("PUT")
 	r.Handle("/user/{id}", auth.JwtVerify(http.HandlerFunc(controllers.DeleteUser))).Methods("DELETE")
 
