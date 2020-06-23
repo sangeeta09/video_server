@@ -23,8 +23,8 @@ func InitHandlers() *mux.Router {
 	r.HandleFunc("/users", controllers.CreateUser).Methods("POST")
 	r.HandleFunc("/users", controllers.GetAllUsers).Methods("GET")
 	r.Handle("/users/{id}", http.HandlerFunc(controllers.GetUser)).Methods("GET")
-	r.Handle("/users/{id}", auth.JwtVerify(http.HandlerFunc(controllers.UpdateUser))).Methods("PUT")
-	r.Handle("/users/{id}", auth.JwtVerify(http.HandlerFunc(controllers.DeleteUser))).Methods("DELETE")
+	r.Handle("/users", auth.JwtVerify(http.HandlerFunc(controllers.UpdateUser))).Methods("PUT")
+	r.Handle("/users", auth.JwtVerify(http.HandlerFunc(controllers.DeleteUser))).Methods("DELETE")
 
 	//room mangement routes
 	r.Handle("/rooms", auth.JwtVerify(http.HandlerFunc(controllers.CreateRoom))).Methods("POST")

@@ -136,12 +136,21 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 	user := &models.User{}
 	json.NewDecoder(r.Body).Decode(user)
 
-	userDetail, resp, httpStatus := GetUserDetailFromUserID(w, r)
-	if httpStatus != http.StatusOK {
-		w.WriteHeader(httpStatus)
+	tk, ok := getTokenFromContext(r.Context())
+	if !ok {
+		w.WriteHeader(http.StatusInternalServerError)
+		var resp = map[string]interface{}{"message": "Temporary error, Please try again after sometime"}
 		json.NewEncoder(w).Encode(resp)
 		return
 	}
+
+	if _, ok := models.UserDetailMap[tk.Email]; !ok {
+		w.WriteHeader(http.StatusInternalServerError)
+		var resp = map[string]interface{}{"message": "User with this Email address doesn't exist"}
+		json.NewEncoder(w).Encode(resp)
+		return
+	}
+	userDetail := models.UserDetailMap[tk.Email]
 
 	err := bcrypt.CompareHashAndPassword([]byte(userDetail.Password), []byte(user.Password))
 	if err != nil && err == bcrypt.ErrMismatchedHashAndPassword {
@@ -172,36 +181,23 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 }
 
 func DeleteUser(w http.ResponseWriter, r *http.Request) {
-	params := mux.Vars(r)
-	var id = params["id"]
-
-	ID, err := strconv.ParseUint(id, 0, 64)
-	if err != nil {
-		var resp = map[string]interface{}{"message": "UserId is not integer"}
-		w.WriteHeader(http.StatusBadRequest)
-		json.NewEncoder(w).Encode(resp)
-		return
-
-	}
-
-	if _, ok := models.UserIDMap[ID]; !ok {
-		var resp = map[string]interface{}{"message": "User with this User ID doesn't exist"}
-		w.WriteHeader(http.StatusConflict)
+	tk, ok := getTokenFromContext(r.Context())
+	if !ok {
+		w.WriteHeader(http.StatusInternalServerError)
+		var resp = map[string]interface{}{"message": "Temporary error, Please try again after sometime"}
 		json.NewEncoder(w).Encode(resp)
 		return
 	}
 
-	email := models.UserIDMap[ID]
-
-	if _, ok := models.UserDetailMap[email]; !ok {
+	if _, ok := models.UserDetailMap[tk.Email]; !ok {
 		var resp = map[string]interface{}{"message": "User with this Email address doesn't exist"}
 		w.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(w).Encode(resp)
 		return
 	}
 
-	delete(models.UserDetailMap, email)
-	delete(models.UserIDMap, ID)
+	delete(models.UserDetailMap, tk.Email)
+	delete(models.UserIDMap, tk.UserID)
 
 	json.NewEncoder(w).Encode("User deleted")
 
