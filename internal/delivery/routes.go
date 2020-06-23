@@ -22,13 +22,17 @@ func InitHandlers() *mux.Router {
 	r.HandleFunc("/login", controllers.Login).Methods("POST")
 	r.HandleFunc("/users", controllers.CreateUser).Methods("POST")
 	r.HandleFunc("/users", controllers.GetAllUsers).Methods("GET")
-	r.Handle("/user/{id}", http.HandlerFunc(controllers.GetUser)).Methods("GET")
-	r.Handle("/user/{id}", auth.JwtVerify(http.HandlerFunc(controllers.UpdateUser))).Methods("PUT")
-	r.Handle("/user/{id}", auth.JwtVerify(http.HandlerFunc(controllers.DeleteUser))).Methods("DELETE")
+	r.Handle("/users/{id}", http.HandlerFunc(controllers.GetUser)).Methods("GET")
+	r.Handle("/users/{id}", auth.JwtVerify(http.HandlerFunc(controllers.UpdateUser))).Methods("PUT")
+	r.Handle("/users/{id}", auth.JwtVerify(http.HandlerFunc(controllers.DeleteUser))).Methods("DELETE")
 
 	//room mangement routes
 	r.Handle("/rooms", auth.JwtVerify(http.HandlerFunc(controllers.CreateRoom))).Methods("POST")
-	r.Handle("/rooms/{id}", http.HandlerFunc(controllers.GetRoomInfo)).Methods("GET")
+	r.Handle("/rooms/{guid}", http.HandlerFunc(controllers.GetRoomInfo)).Methods("GET")
+	r.Handle("/rooms/{guid}/users", auth.JwtVerify(http.HandlerFunc(controllers.JoinRoom))).Methods("POST")
+	r.Handle("/rooms/{guid}/users", auth.JwtVerify(http.HandlerFunc(controllers.LeaveRoom))).Methods("DELETE")
+	r.Handle("/rooms/{guid}", auth.JwtVerify(http.HandlerFunc(controllers.ChangeHost))).Methods("PUT")
+	// r.Handle("/users/{id}/rooms", http.HandlerFunc(controllers.GetRoomInfoList)).Methods("GET")
 
 	return r
 }

@@ -44,3 +44,8 @@ func JwtVerify(next http.Handler) http.Handler {
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }
+
+func getTokenFromContext(ctx context.Context) (*models.Token, bool) {
+	token, ok := ctx.Value("user").(*models.Token)
+	return token, ok
+}
