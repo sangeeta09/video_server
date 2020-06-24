@@ -1,7 +1,7 @@
 # video_server
 It's a basic server having following functionalities:
 
-## User Management: 
+## User management: 
 ```
 The server is able to register and authenticate users.
 User has: username, password, and an optional mobile_token (string)
