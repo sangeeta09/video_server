@@ -224,8 +224,28 @@ func LeaveRoom(w http.ResponseWriter, r *http.Request) {
 			w.WriteHeader(http.StatusOK)
 			return
 		}
+	} else {
+		//check in participant list
+		found := false
+		finalUserList := []uint64{}
+		for _, uID := range room.ParticipantList {
+			if uID == tk.UserID {
+				found = true
+			} else {
+				finalUserList = append(finalUserList, uID)
+			}
+		}
+		if found {
+			room.ParticipantList = finalUserList
+		} else {
+			w.WriteHeader(http.StatusNotFound)
+			var resp = map[string]interface{}{"message": "User has not joined this room"}
+			json.NewEncoder(w).Encode(resp)
+			return
+		}
 	}
 
+	//remove from global map
 	//get all rooms by userId
 	if rooms, ok := models.UserRoomMap[tk.UserID]; ok {
 		//check if user present in given room
@@ -247,6 +267,7 @@ func LeaveRoom(w http.ResponseWriter, r *http.Request) {
 
 				models.UserRoomMap[tk.UserID] = finalRoomList
 			}
+
 			w.WriteHeader(http.StatusOK)
 			return
 		}
