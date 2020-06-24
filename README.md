@@ -7,7 +7,7 @@ The server is able to register and authenticate users.
 User has: username, password, and an optional mobile_token (string)
 ```
 
-##Routes:
+### Routes:
 ```
 GET /users - Get users (no auth required): returns a list of all users
 
@@ -34,7 +34,7 @@ Room has: name (non-unique), guid, host user, participants (users) in the room, 
 
 ```
 
-##Routes:
+### Routes:
 ```
 
 POST /rooms - Create a room (signed in as a user): creates a room hosted by the current user, with an optional capacity limit. Default is 5.
@@ -55,7 +55,7 @@ that the user is in.
 
 ## Curl Example:
 
-##Create User:
+### Create User:
 ```
 curl --location --request POST 'http://localhost:9001/users' \
 --header 'Content-Type: text/plain' \
@@ -67,7 +67,7 @@ curl --location --request POST 'http://localhost:9001/users' \
 }'
 ```
 
-##Login :
+### Login :
 ```
 curl --location --request POST 'http://localhost:9001/login' \
 --header 'Content-Type: text/plain' \
@@ -83,17 +83,17 @@ Response will be :
 use this JWT token in further request.
 ```
 
-##Get All users in the system:
+### Get All users in the system:
 ```
 curl --location --request GET 'http://localhost:9001/users'
 ```
 
-##Get Info about an user:
+### Get Info about an user:
 ```
 curl --location --request GET 'http://localhost:9001/users/1'
 ```
 
-##Update Password/Mobile Token for an user:
+### Update Password/Mobile Token for an user:
 ```
 curl --location --request PUT 'http://localhost:9001/users' \
 --header 'x-access-token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVc2VySUQiOjEsIk5hbWUiOiJ2aXZlazIiLCJFbWFpbCI6InZpdmVrMkBtYWlsLmNvbSIsImV4cCI6MTU5Mjk2NTk4OX0.UODp4HNgZASyEw88awHs-faE2suE6qrhbPS9WGhOKDA' \
@@ -105,11 +105,67 @@ curl --location --request PUT 'http://localhost:9001/users' \
 }'
 ```
 
-##Delete logged in User
+### Delete logged in User
 ```
 curl --location --request DELETE 'http://localhost:9001/users' \
 --header 'x-access-token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVc2VySUQiOjEsIk5hbWUiOiJ2aXZlazIiLCJFbWFpbCI6InZpdmVrMkBtYWlsLmNvbSIsImV4cCI6MTU5Mjk2NTk4OX0.UODp4HNgZASyEw88awHs-faE2suE6qrhbPS9WGhOKDA'
 ```
+
+### Create Rooms:
+```
+curl --location --request POST 'http://localhost:9001/rooms' \
+--header 'x-access-token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVc2VySUQiOjMsIk5hbWUiOiJ2aXZlazMiLCJFbWFpbCI6InZpdmVrM0BtYWlsLmNvbSIsImV4cCI6MTU5Mjk2NjUyM30.BYJQ5GkWiwb3TmKwZwk49C7WsgdVuKVpr4MD6Rux0CI' \
+--header 'Content-Type: text/plain' \
+--data-raw '{
+"name" : "room1",
+"host_id" : 2,
+"participants" : [3],
+"capacity" : 4
+}'
+
+Response:
+{"guid":"b6fe5e37-d8fb-49aa-b816-9f139298e9de","name":"room1","host_id":2,"participants":[3],"capacity":4}
+
+Save this guid for this room
+```
+
+### Get Room Info :
+```
+curl --location --request GET 'http://localhost:9001/rooms/b6fe5e37-d8fb-49aa-b816-9f139298e9de'
+```
+
+### Join room (signed in as a user) :
+```
+login with new user: get access token and then hit this api
+
+curl --location --request POST 'http://localhost:9001/rooms/b6fe5e37-d8fb-49aa-b816-9f139298e9de/users' \
+--header 'x-access-token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVc2VySUQiOjQsIk5hbWUiOiJ2aXZlazQiLCJFbWFpbCI6InZpdmVrNEBtYWlsLmNvbSIsImV4cCI6MTU5Mjk2Njg2M30.iO4kTNR1Ki5LOh1QHPQoSJQedZf-1wHHNdKdemP1Zdw'
+```
+
+### Leave room (signed in as a user) :
+```
+login with new user: get access token and then hit this api
+
+curl --location --request DELETE 'http://localhost:9001/rooms/b6fe5e37-d8fb-49aa-b816-9f139298e9de/users' \
+--header 'x-access-token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVc2VySUQiOjQsIk5hbWUiOiJ2aXZlazQiLCJFbWFpbCI6InZpdmVrNEBtYWlsLmNvbSIsImV4cCI6MTU5Mjk2Njg2M30.iO4kTNR1Ki5LOh1QHPQoSJQedZf-1wHHNdKdemP1Zdw'
+```
+
+### Change host (must be signin as the host):
+```
+login with new user: get access token and then hit this api
+
+curl --location --request PUT 'http://localhost:9001/rooms/b6fe5e37-d8fb-49aa-b816-9f139298e9de' \
+--header 'x-access-token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVc2VySUQiOjQsIk5hbWUiOiJ2aXZlazQiLCJFbWFpbCI6InZpdmVrNEBtYWlsLmNvbSIsImV4cCI6MTU5Mjk2NzE3N30.T5t5xHvYt7pewPJKxOJZULXz6P2GZQmHoX8SFsQHInc'
+```
+
+###  Search for the rooms that a user is in:
+```
+curl --location --request GET 'http://localhost:9001/users/3/rooms' \
+--header 'x-access-token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVc2VySUQiOjEsIk5hbWUiOiJ2aXZlazIiLCJFbWFpbCI6InZpdmVrMkBtYWlsLmNvbSIsImV4cCI6MTU5Mjk2NTk4OX0.UODp4HNgZASyEw88awHs-faE2suE6qrhbPS9WGhOKDA'
+```
+
+
+
 
 
 
