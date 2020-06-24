@@ -24,6 +24,18 @@ mobile_token of the user
 
 DELETE /users - Delete User (must be signed in as the user): deletes the user
 
+```
+
+## Room Management: 
+```
+The server is able to handle creating conference rooms.
+
+Room has: name (non-unique), guid, host user, participants (users) in the room, and a capacity limit.
+
+```
+
+##Routes:
+```
 
 POST /rooms - Create a room (signed in as a user): creates a room hosted by the current user, with an optional capacity limit. Default is 5.
 
