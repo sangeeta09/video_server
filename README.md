@@ -52,3 +52,59 @@ GET /users/{id}/rooms - Search for the rooms that a user is in: given a username
 that the user is in.
  
 ```
+
+## Curl Example:
+
+##Create User:
+```
+curl --location --request POST 'http://localhost:9001/users' \
+--header 'Content-Type: text/plain' \
+--data-raw '{
+"name" : "vivek2",
+"email" : "vivek2@mail.com",
+"password" : "mypass2",
+"mobile_token" : "mytoken2"
+}'
+```
+
+##Create User:
+```
+curl --location --request POST 'http://localhost:9001/users' \
+--header 'Content-Type: text/plain' \
+--data-raw '{
+"name" : "vivek2",
+"email" : "vivek2@mail.com",
+"password" : "mypass2",
+"mobile_token" : "mytoken2"
+}'
+```
+
+##Login :
+```
+curl --location --request POST 'http://localhost:9001/login' \
+--header 'Content-Type: text/plain' \
+--data-raw '{
+"name" : "vivek2",
+"email" : "vivek2@mail.com",
+"password" : "mypass2",
+"mobile_token" : "mytoken2"
+}'
+
+Response will be :
+{"email":"vivek2@mail.com","message":"logged in","token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVc2VySUQiOjEsIk5hbWUiOiJ2aXZlazIiLCJFbWFpbCI6InZpdmVrMkBtYWlsLmNvbSIsImV4cCI6MTU5Mjk2NTUyOX0.MKPTEe5z6G2qm6xjunJVJZz-HhOYLzj5Uu0WCVfF21w"}
+
+
+use this JWT token in further request.
+```
+
+##Get All users :
+```
+curl --location --request GET 'http://localhost:9001/users' \
+--header 'Content-Type: text/plain' \
+--data-raw '{
+"name" : "vivek",
+"email" : "vivek@mail.com",
+"password" : "mypass3",
+"mobile_token" : "mytoken2"
+}'
+```
