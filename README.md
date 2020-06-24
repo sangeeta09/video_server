@@ -67,27 +67,13 @@ curl --location --request POST 'http://localhost:9001/users' \
 }'
 ```
 
-##Create User:
-```
-curl --location --request POST 'http://localhost:9001/users' \
---header 'Content-Type: text/plain' \
---data-raw '{
-"name" : "vivek2",
-"email" : "vivek2@mail.com",
-"password" : "mypass2",
-"mobile_token" : "mytoken2"
-}'
-```
-
 ##Login :
 ```
 curl --location --request POST 'http://localhost:9001/login' \
 --header 'Content-Type: text/plain' \
 --data-raw '{
-"name" : "vivek2",
 "email" : "vivek2@mail.com",
-"password" : "mypass2",
-"mobile_token" : "mytoken2"
+"password" : "mypass2"
 }'
 
 Response will be :
@@ -97,14 +83,33 @@ Response will be :
 use this JWT token in further request.
 ```
 
-##Get All users :
+##Get All users in the system:
 ```
-curl --location --request GET 'http://localhost:9001/users' \
+curl --location --request GET 'http://localhost:9001/users'
+```
+
+##Get Info about an user:
+```
+curl --location --request GET 'http://localhost:9001/users/1'
+```
+
+##Update Password/Mobile Token for an user:
+```
+curl --location --request PUT 'http://localhost:9001/users' \
+--header 'x-access-token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVc2VySUQiOjEsIk5hbWUiOiJ2aXZlazIiLCJFbWFpbCI6InZpdmVrMkBtYWlsLmNvbSIsImV4cCI6MTU5Mjk2NTk4OX0.UODp4HNgZASyEw88awHs-faE2suE6qrhbPS9WGhOKDA' \
 --header 'Content-Type: text/plain' \
 --data-raw '{
-"name" : "vivek",
-"email" : "vivek@mail.com",
-"password" : "mypass3",
-"mobile_token" : "mytoken2"
+"email" : "vivek2@mail.com",
+"password" : "mypassnew",
+"mobile_token" : "mytoken5"
 }'
 ```
+
+##Delete logged in User
+```
+curl --location --request DELETE 'http://localhost:9001/users' \
+--header 'x-access-token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVc2VySUQiOjEsIk5hbWUiOiJ2aXZlazIiLCJFbWFpbCI6InZpdmVrMkBtYWlsLmNvbSIsImV4cCI6MTU5Mjk2NTk4OX0.UODp4HNgZASyEw88awHs-faE2suE6qrhbPS9WGhOKDA'
+```
+
+
+
